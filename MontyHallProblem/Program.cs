@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * Bill Nicholson
+ * nicholdw@ucmail.uc.edu
+ * Simulate the Monty Hall problem to show that switching doors increases the player's chance of winning.
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +44,8 @@ namespace MontyHallProblem {
                              + winningPercentage * 100 
                              + " winning percentage");
             // Simulate the player changing doors after one door is revealed
+            totalGames = 0;
+            playerWins = 0;
             for (int i = 0; i < TOTAL_GAMES; i++) {
                 InitDoors(doors);
                 int playerChoice = 0;
@@ -47,8 +54,16 @@ namespace MontyHallProblem {
                 // Put the prize behind a door and let the player choose a door. They may be the same door.
                 playerChoice = r.Next(3);
                 prizeIdx = r.Next(3);
-                // Now the player changes doors to the only door that is not the players original choice or the door that was revealed
-                int newPlayerDoor;
+                // Now the player changes doors to the only door that is not the players original choice and not the door that was revealed
+                int doorRevealed = 0;
+                for (doorRevealed = 0; doorRevealed < 3; doorRevealed++) {
+                    if (doorRevealed != playerChoice && doorRevealed != prizeIdx) { break; }      // We found the door that will be revealed. 
+                }
+                int newPlayerChoice = 0;
+                for (newPlayerChoice = 0; newPlayerChoice < 3; newPlayerChoice++) {
+                    if (newPlayerChoice != playerChoice && newPlayerChoice != doorRevealed) { break; }      // We found the door that the player will switch to. 
+                }
+                playerChoice = newPlayerChoice;
                 // At this point the player has a 2 in 3 chance of being right.
                 if (playerChoice == prizeIdx) {
                     playerWins++;
@@ -56,7 +71,8 @@ namespace MontyHallProblem {
                 totalGames++;
             }
             winningPercentage = (double)playerWins / totalGames;
-            Console.WriteLine(totalGames
+            Console.WriteLine("The player DID change doors after a losing door was revealed. "
+                             + totalGames
                              + " games played, "
                              + winningPercentage * 100
                              + " winning percentage");
